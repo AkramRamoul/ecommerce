@@ -4,25 +4,30 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { CustomCat } from "../types";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
+import {
+  CategoriesgetManyOut,
+  CategoriesgetManyOutputSingle,
+} from "@/modules/categories/types";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  data: CustomCat[];
 }
 
-export const CategorySideBar = ({ open, onOpenChange, data }: Props) => {
-  const [parentCategories, setParentCategories] = useState<CustomCat[] | null>(
-    null
-  );
-  const [selectedCategory, setSelectedCategory] = useState<CustomCat | null>(
-    null
-  );
+export const CategorySideBar = ({ open, onOpenChange }: Props) => {
+  const trpc = useTRPC();
+
+  const { data } = useQuery(trpc.categories.getMany.queryOptions());
+  const [parentCategories, setParentCategories] =
+    useState<CategoriesgetManyOut | null>(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategoriesgetManyOutputSingle | null>(null);
 
   const currentCategories = parentCategories ?? data ?? [];
 
@@ -33,9 +38,9 @@ export const CategorySideBar = ({ open, onOpenChange, data }: Props) => {
     setParentCategories(null);
     onOpenChange(open);
   };
-  const handleClick = (category: CustomCat) => {
+  const handleClick = (category: CategoriesgetManyOutputSingle) => {
     if (category.subcategories && category.subcategories.length > 0) {
-      setParentCategories(category.subcategories as CustomCat[]);
+      setParentCategories(category.subcategories as CategoriesgetManyOut);
       setSelectedCategory(category);
     } else {
       if (parentCategories && selectedCategory) {
@@ -80,7 +85,7 @@ export const CategorySideBar = ({ open, onOpenChange, data }: Props) => {
               Back
             </button>
           )}
-          {currentCategories.map((category: CustomCat) => (
+          {currentCategories.map((category: CategoriesgetManyOutputSingle) => (
             <button
               key={category.slug}
               onClick={() => handleClick(category)}
