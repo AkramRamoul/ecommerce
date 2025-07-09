@@ -80,7 +80,9 @@ export const NavBar = () => {
           className="border-l border-t-0 border-b-0 border-r-0 px-12 rounded-none h-full bg-white hover:bg-rose-400 transition-colors text-lg"
           variant={"secondary"}
         >
-          <Link href="/sign-in">Login</Link>
+          <Link prefetch href="/sign-in">
+            Login
+          </Link>
         </Button>
         <Button
           asChild
@@ -88,7 +90,9 @@ export const NavBar = () => {
           text-white hover:bg-rose-400 hover:text-black transition-colors text-lg"
           variant={"secondary"}
         >
-          <Link href="sign-up">Start Selling</Link>
+          <Link prefetch href="sign-up">
+            Start Selling
+          </Link>
         </Button>
       </div>
       <div className="flex lg:hidden justify-center items-center">
