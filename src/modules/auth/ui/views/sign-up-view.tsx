@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTRPC } from "@/trpc/client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 const poppins = Poppins({
@@ -52,10 +52,14 @@ const registerSchema = z.object({
 export const SignUp = () => {
   const router = useRouter();
   const trpc = useTRPC();
+  const query = useQueryClient();
   const register = useMutation(
     trpc.auth.register.mutationOptions({
       onError: (err) => toast.error(err.message),
-      onSuccess: () => router.push("/"),
+      onSuccess: async () => {
+        await query.invalidateQueries(trpc.auth.session.queryFilter());
+        router.push("/");
+      },
     })
   );
   const form = useForm<z.infer<typeof registerSchema>>({
