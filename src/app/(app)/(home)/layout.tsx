@@ -1,11 +1,14 @@
-import Footer from "./footer";
-import { NavBar } from "./navBar";
-import { SearchFilters, SearchLoading } from "./search-filters";
+import Footer from "@/modules/home/ui/components/footer";
+import {
+  SearchFilters,
+  SearchLoading,
+} from "@/modules/home/ui/components/search-filters";
 
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import { getQueryClient, trpc } from "@/trpc/server";
 import { Suspense } from "react";
+import { NavBar } from "@/modules/home/ui/components/navBar";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const queryClient = getQueryClient();
