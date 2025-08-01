@@ -14,12 +14,11 @@ export const formatAsCurrency = (value: string) => {
   const numeric = value.replace(/[^0-9.-]+/g, "");
   const parsed = parseFloat(numeric);
   if (isNaN(parsed)) return "";
-  return new Intl.NumberFormat("fr-DZ", {
-    style: "currency",
-    currency: "DZD",
+  const formatted = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   }).format(parsed);
+  return `DA ${formatted}`;
 };
 
 export const PriceFilter = ({
@@ -46,7 +45,7 @@ export const PriceFilter = ({
           type="text"
           onChange={handleMinPriceChange}
           value={minPrice ? formatAsCurrency(minPrice) : ""}
-          placeholder="DZD 0"
+          placeholder="DA 0"
         />
       </div>
       <div className="flex flex-col gap-2">
@@ -55,7 +54,7 @@ export const PriceFilter = ({
           type="text"
           onChange={handleMaxPriceChange}
           value={maxPrice ? formatAsCurrency(maxPrice) : ""}
-          placeholder="DZD 1000"
+          placeholder="DA 1000"
         />
       </div>
     </div>
