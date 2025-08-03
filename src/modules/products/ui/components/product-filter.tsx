@@ -36,9 +36,18 @@ export const ProductFilters = () => {
     setFilters({ ...filters, [key]: value });
   };
 
-  const hasFilters = Object.values(filters).some(
-    (value) => value !== "" && value !== undefined
-  );
+  const hasFilters = Object.entries(filters).some(([key, value]) => {
+    if (key == "sort") return false;
+
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
+
+    if (typeof value === "string") {
+      return value !== "";
+    }
+    return value !== null;
+  });
 
   const onClear = () => {
     setFilters({
