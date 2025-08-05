@@ -1,3 +1,4 @@
+import { PAGE_LIMIT } from "@/constants";
 import { loadProductFilters } from "@/modules/products/search-Params";
 import { ProductListView } from "@/modules/products/ui/views/ProductListView";
 import { getQueryClient, trpc } from "@/trpc/server";
@@ -17,10 +18,11 @@ const Page = async ({ params, searchParams }: Props) => {
   console.log("Filters:", filters);
 
   const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(
-    trpc.products.getMany.queryOptions({
+  void queryClient.prefetchInfiniteQuery(
+    trpc.products.getMany.infiniteQueryOptions({
       categorySlug: subcategory,
       ...filters,
+      limit: PAGE_LIMIT,
     })
   );
 
