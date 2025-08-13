@@ -6,9 +6,14 @@ import { ProductList, ProductListSuspense } from "../components/product-List";
 interface Props {
   category?: string;
   tenantSlug?: string;
+  narrowView?: boolean;
 }
 
-export const ProductListView = ({ category, tenantSlug }: Props) => {
+export const ProductListView = ({
+  category,
+  tenantSlug,
+  narrowView,
+}: Props) => {
   return (
     <div className="px-4 lg:px-12 py-8 flex flex-col gap-4 ">
       <div className="flex flex-col lg:flex-row lg:items-center gap-y-2 lg:gap-y-0 justify-between">
@@ -20,8 +25,12 @@ export const ProductListView = ({ category, tenantSlug }: Props) => {
           <ProductFilters />
         </div>
         <div className="lg:col-span-4 xl:col-span-6">
-          <Suspense fallback={<ProductListSuspense />}>
-            <ProductList category={category} tenantSlug={tenantSlug} />
+          <Suspense fallback={<ProductListSuspense narrowView={narrowView} />}>
+            <ProductList
+              category={category}
+              tenantSlug={tenantSlug}
+              narrowView={narrowView}
+            />
           </Suspense>
         </div>
       </div>

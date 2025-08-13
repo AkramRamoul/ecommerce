@@ -1,13 +1,16 @@
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/navigation";
+
+import { generateTenentUrl } from "@/lib/utils";
 
 interface ProductCardProps {
   id: string;
   name: string;
   imageUrl?: string | null;
-  authorUsername: string;
-  authorImageUrl?: string | null;
+  tenantUsername: string;
+  tenantImageUrl?: string | null;
   reviewRating: number;
   reviewCount: number;
   price: number;
@@ -17,12 +20,21 @@ export const ProductCard = ({
   id,
   name,
   imageUrl,
-  authorUsername,
-  authorImageUrl,
+  tenantUsername,
+  tenantImageUrl,
   reviewRating,
   reviewCount,
   price,
 }: ProductCardProps) => {
+  const router = useRouter();
+
+  const handleRedirect = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    router.push(generateTenentUrl(tenantUsername));
+  };
+
   return (
     <Link href={`/products/${id}`} className="no-underline">
       <div
@@ -39,18 +51,18 @@ export const ProductCard = ({
         </div>
         <div className="p-4 flex flex-col border-y gap-3 flex-1">
           <h2 className="text-lg font-medium line-clamp-4">{name}</h2>
-          <div className="flex items-center gap-2">
-            {authorImageUrl && (
+          <div className="flex items-center gap-2" onClick={handleRedirect}>
+            {tenantImageUrl && (
               <Image
-                src={authorImageUrl}
-                alt={authorUsername}
+                src={tenantImageUrl}
+                alt={tenantUsername}
                 width={16}
                 height={16}
                 className="rounded-full border shrink-0 size-[16px]"
               />
             )}
 
-            <p className="text-sm font-medium underline">{authorUsername}</p>
+            <p className="text-sm font-medium underline">{tenantUsername}</p>
           </div>
           {reviewCount > 0 && (
             <div className="flex items-center gap-1">
