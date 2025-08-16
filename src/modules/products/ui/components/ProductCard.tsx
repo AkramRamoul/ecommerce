@@ -36,7 +36,10 @@ export const ProductCard = ({
   };
 
   return (
-    <Link href={`/products/${id}`} className="no-underline">
+    <Link
+      href={`${generateTenentUrl(tenantUsername)}/products/${id}`}
+      className="no-underline"
+    >
       <div
         className="border rounded-md bg-white overflow-hidden h-full flex flex-col
       hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transtition-shadow"
