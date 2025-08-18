@@ -7,6 +7,25 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
+import dynamic from "next/dynamic";
+import { Button } from "@/components/ui/button";
+import { ShoppingCartIcon } from "lucide-react";
+
+const CheckoutButton = dynamic(
+  () =>
+    import("@/modules/checkout/ui/components/checkout-button").then(
+      (mod) => mod.CheckoutButton
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <Button className="bg-white" disabled={true}>
+        <ShoppingCartIcon className="text-black" />
+      </Button>
+    ),
+  }
+);
+
 interface Props {
   slug: string;
 }
@@ -37,6 +56,7 @@ export const Navbar = ({ slug }: Props) => {
           )}
           <p className="text-xl">{data.name}</p>
         </Link>
+        <CheckoutButton tenantSlug={data.slug} />
       </div>
     </nav>
   );
@@ -47,6 +67,9 @@ export const TenantNavBarSkeleton = () => {
     <nav className="h-20 border-b font-medium bg-white">
       <div className="max-w-(--breakpoint-xl) mx-auto flex justify-between items-center h-full px-4 lg:px-12 ">
         <div />
+        <Button className="bg-white" disabled={true}>
+          <ShoppingCartIcon className="text-black" />
+        </Button>
       </div>
     </nav>
   );
