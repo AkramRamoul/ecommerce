@@ -84,7 +84,7 @@ export const ProductCard = ({
         </div>
         <div className="p-4 ">
           <div className="relartive px-2 py-1 border bg-rose-400 w-fit">
-            <p className="text-sm font-medium">DA{price.toFixed(2)}</p>
+            <p className="text-sm font-medium">DA {price.toFixed(2)}</p>
           </div>
         </div>
       </div>
