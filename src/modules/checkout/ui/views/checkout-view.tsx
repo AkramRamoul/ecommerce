@@ -11,6 +11,7 @@ import { useCart } from "../../hooks/use-cart";
 import { generateTenentUrl } from "@/lib/utils";
 import CheckoutItem from "../components/checkout-items";
 import { CheckoutSideBar } from "../components/checkou-sidebar";
+import { InboxIcon, LoaderIcon } from "lucide-react";
 
 interface Props {
   tenantSlug: string;
@@ -19,7 +20,7 @@ export const CheckoutView = ({ tenantSlug }: Props) => {
   const { productIds, clearAllCarts, removeProduct } = useCart(tenantSlug);
 
   const trpc = useTRPC();
-  const { data, error } = useQuery(
+  const { data, error, isLoading } = useQuery(
     trpc.checkout.getProduct.queryOptions({
       ids: productIds,
     })
@@ -30,6 +31,27 @@ export const CheckoutView = ({ tenantSlug }: Props) => {
       toast.warning("Invalid products in cart. Cart cleared.");
     }
   }, [error, clearAllCarts]);
+
+  if (isLoading) {
+    return (
+      <div className="lg:pt-16 pt-4 px-4 lg:px-12 ">
+        <div className="border border-black border-dashed flex items-center justify-center p-8 flex-col gap-y4 bg-white w-full rounded-lg">
+          <LoaderIcon className="size-4 animate-spin" />
+        </div>
+      </div>
+    );
+  }
+
+  if (data?.totalDocs === 0) {
+    return (
+      <div className="lg:pt-16 pt-4 px-4 lg:px-12 ">
+        <div className="border border-black border-dashed flex items-center justify-center p-8 flex-col gap-y4 bg-white w-full rounded-lg">
+          <InboxIcon />
+          <p className="text-base font-medium">No products found.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="lg:pt-16 pt-4 px-4 lg:px-12 ">
@@ -56,8 +78,8 @@ export const CheckoutView = ({ tenantSlug }: Props) => {
         <div className="lg:col-span-3">
           <CheckoutSideBar
             totalPrice={data?.totalPrice || 0}
-            oncheckout={() => {}}
-            isCanceled={false}
+            onCheckout={() => {}}
+            isCanceled={true}
             isPending={false}
           />
         </div>
