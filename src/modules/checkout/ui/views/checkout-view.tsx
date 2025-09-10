@@ -5,19 +5,25 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 
 import { useTRPC } from "@/trpc/client";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { useCart } from "../../hooks/use-cart";
 import { generateTenentUrl } from "@/lib/utils";
 import CheckoutItem from "../components/checkout-items";
 import { CheckoutSideBar } from "../components/checkou-sidebar";
 import { InboxIcon, LoaderIcon } from "lucide-react";
+import { useCheckoutStates } from "../../hooks/use-checkou-state";
+import { useRouter } from "next/navigation";
 
 interface Props {
   tenantSlug: string;
 }
 export const CheckoutView = ({ tenantSlug }: Props) => {
-  const { productIds, clearAllCarts, removeProduct } = useCart(tenantSlug);
+  const router = useRouter();
+
+  const [states, setStates] = useCheckoutStates();
+
+  const { productIds, clearCart, removeProduct } = useCart(tenantSlug);
 
   const trpc = useTRPC();
   const { data, error, isLoading } = useQuery(
@@ -25,12 +31,37 @@ export const CheckoutView = ({ tenantSlug }: Props) => {
       ids: productIds,
     })
   );
+  const purshase = useMutation(
+    trpc.checkout.purchase.mutationOptions({
+      onMutate: () => {
+        setStates({ success: false, cancel: false });
+      },
+      onSuccess: (data) => {
+        window.location.href = data.url;
+      },
+      onError: (error) => {
+        if (error.data?.code === "UNAUTHORIZED") {
+          router.push("/sign-in");
+        }
+        toast.error(error.message || "Something went wrong");
+      },
+    })
+  );
+
+  useEffect(() => {
+    if (states.success) {
+      setStates({ success: false, cancel: false });
+      clearCart();
+      router.push("/products");
+    }
+  }, [clearCart, states.success, router, setStates]);
+
   useEffect(() => {
     if (error?.data?.code === "NOT_FOUND") {
-      clearAllCarts();
+      clearCart();
       toast.warning("Invalid products in cart. Cart cleared.");
     }
-  }, [error, clearAllCarts]);
+  }, [error, clearCart]);
 
   if (isLoading) {
     return (
@@ -78,9 +109,9 @@ export const CheckoutView = ({ tenantSlug }: Props) => {
         <div className="lg:col-span-3">
           <CheckoutSideBar
             totalPrice={data?.totalPrice || 0}
-            onCheckout={() => {}}
-            isCanceled={true}
-            isPending={false}
+            onPurchase={() => purshase.mutate({ productIds, tenantSlug })}
+            isCanceled={states.cancel}
+            disabled={purshase.isPending}
           />
         </div>
       </div>
