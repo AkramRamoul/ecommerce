@@ -46,7 +46,7 @@ export const ProductView = ({ productId, tenantSlug }: Props) => {
       <div className="border rounded-sm bg-white overflow-hidden">
         <div className="relative aspect-[3.9] border-b">
           <Image
-            src={data.image?.url || "/authbg.png"}
+            src={data.image?.url || "/pholder.jpg"}
             fill
             alt={data.title}
             className="object-cover"
@@ -110,7 +110,11 @@ export const ProductView = ({ productId, tenantSlug }: Props) => {
             <div className="border-t lg:border-t-0 lg:border-l h-full">
               <div className="flex flex-col gap-4 p-6 border-b">
                 <div className="flex flex-row items-center gap-2">
-                  <CartButton tenantSlug={tenantSlug} productId={productId} />
+                  <CartButton
+                    isPurchased={data.isPurchased}
+                    tenantSlug={tenantSlug}
+                    productId={productId}
+                  />
                   <Button
                     className="size-12"
                     variant={"elevated"}

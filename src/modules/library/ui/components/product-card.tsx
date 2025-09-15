@@ -1,9 +1,6 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-
-import { generateTenentUrl } from "@/lib/utils";
 
 interface ProductCardProps {
   id: string;
@@ -13,7 +10,6 @@ interface ProductCardProps {
   tenantImageUrl?: string | null;
   reviewRating: number;
   reviewCount: number;
-  price: number;
 }
 
 export const ProductCard = ({
@@ -24,22 +20,9 @@ export const ProductCard = ({
   tenantImageUrl,
   reviewRating,
   reviewCount,
-  price,
 }: ProductCardProps) => {
-  const router = useRouter();
-
-  const handleRedirect = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    router.push(generateTenentUrl(tenantUsername));
-  };
-
   return (
-    <Link
-      href={`${generateTenentUrl(tenantUsername)}/products/${id}`}
-      className="no-underline"
-    >
+    <Link href={`/library/${id}`} className="no-underline">
       <div
         className="border rounded-md bg-white overflow-hidden h-full flex flex-col
       hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transtition-shadow"
@@ -54,7 +37,7 @@ export const ProductCard = ({
         </div>
         <div className="p-4 flex flex-col border-y gap-3 flex-1">
           <h2 className="text-lg font-medium line-clamp-4">{name}</h2>
-          <div className="flex items-center gap-2" onClick={handleRedirect}>
+          <div className="flex items-center gap-2">
             {tenantImageUrl && (
               <Image
                 src={tenantImageUrl}
@@ -81,11 +64,6 @@ export const ProductCard = ({
               <p className="text-sm font-medium">({reviewCount})</p>
             </div>
           )}
-        </div>
-        <div className="p-4 ">
-          <div className="relartive px-2 py-1 border bg-rose-400 w-fit">
-            <p className="text-sm font-medium">DA {price.toFixed(2)}</p>
-          </div>
         </div>
       </div>
     </Link>

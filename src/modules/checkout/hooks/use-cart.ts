@@ -33,14 +33,27 @@ export const useCart = (tenantSlug: string) => {
     clearCart(tenantSlug);
   };
 
+  const handleAddProduct = useCallback(
+    (productId: string) => {
+      addProduct(tenantSlug, productId);
+    },
+    [addProduct, tenantSlug]
+  );
+  const handleRemoveProduct = useCallback(
+    (productId: string) => {
+      removeProduct(tenantSlug, productId);
+    },
+    [removeProduct, tenantSlug]
+  );
+
   return {
     productIds,
-    addProduct: (productId: string) => addProduct(tenantSlug, productId),
+    addProduct: handleAddProduct,
     toggleProduct,
     isProsuctInCart,
     clearCart: clearTenantCart,
     clearAllCarts,
-    removeProduct: (productId: string) => removeProduct(tenantSlug, productId),
+    removeProduct: handleRemoveProduct,
     totalItems: productIds.length,
   };
 };

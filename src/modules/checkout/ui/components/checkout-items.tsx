@@ -34,7 +34,7 @@ function CheckoutItem({
       <div className="overflow-hidden border-r">
         <div className="relative aspect-square h-full">
           <Image
-            src={image || "/authbg.png"}
+            src={image || "/pholder.jpg"}
             alt={name}
             fill
             className="object-cover"

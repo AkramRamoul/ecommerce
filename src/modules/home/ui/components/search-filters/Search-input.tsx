@@ -41,7 +41,7 @@ export const SearchInput = ({ disabled }: Props) => {
           variant={"elevated"}
           onClick={() => setIsSidebarOpen(true)}
         >
-          <Link href="/library">
+          <Link prefetch href="/library">
             <BookmarkIcon />
             Library
           </Link>
