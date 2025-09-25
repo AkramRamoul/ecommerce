@@ -12,6 +12,7 @@ import { LinkIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
+import { toast } from "sonner";
 
 const CartButton = dynamic(
   () => import("../components/cart-button").then((mod) => mod.CartButton),
@@ -85,15 +86,23 @@ export const ProductView = ({ productId, tenantSlug }: Props) => {
                 </Link>
               </div>
               <div className="hidden lg:flex px-6 items-center py-4 justify-center">
-                <div className="flex items-center gap-1">
-                  <StarRating rating={3} iconClassName="size-4" />
+                <div className="flex items-center gap-2">
+                  <StarRating
+                    rating={data.reviewRating}
+                    iconClassName="size-4"
+                  />
+                  <p className="text-base font-medium">
+                    {data.reviewCount} ratings
+                  </p>
                 </div>
               </div>
             </div>
             <div className="lg:hidden block px-6 py-4 items-center justify-center border-b">
-              <div className="flex items-center gap-1">
-                <StarRating rating={3} iconClassName="size-4" />
-                <p className="text-base font-medium">{5} ratings</p>
+              <div className="flex items-center gap-2">
+                <StarRating rating={data.reviewRating} iconClassName="size-4" />
+                <p className="text-base font-medium">
+                  {data.reviewCount} ratings
+                </p>
               </div>
             </div>
             <div className="p-6">
@@ -118,7 +127,10 @@ export const ProductView = ({ productId, tenantSlug }: Props) => {
                   <Button
                     className="size-12"
                     variant={"elevated"}
-                    onClick={() => {}}
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.href);
+                      toast.success("Product link copied to clipboard");
+                    }}
                     disabled={false}
                   >
                     <LinkIcon />
@@ -135,21 +147,31 @@ export const ProductView = ({ productId, tenantSlug }: Props) => {
                   <h3 className="text-xl font-medium">Ratings</h3>
                   <div className="flex items-center gap-x-1 font-medium">
                     <StarIcon className="size-4 fill-black" />
-                    <p>({5})</p>
-                    <p className="text-base">{5} ratings</p>
+                    <p>({data.reviewRating})</p>
+                    <p className="text-base">{data.reviewCount} ratings</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-[auto_1fr_auto] gap-3 mt-4">
                   {[5, 4, 3, 2, 1].map((rating) => (
                     <Fragment key={rating}>
+                      {/* Star + label */}
                       <div className="flex items-center gap-2">
                         <StarIcon className="size-4 fill-yellow-500" />
                         <p className="text-base">{rating}</p>
                       </div>
+
+                      {/* Progress bar */}
                       <div className="w-full bg-gray-200 rounded-full h-2.5">
-                        <Progress value={5} className="h-[1lh]" />
+                        <Progress
+                          value={data.ratingDistribution[rating]} // percentage value
+                          className="h-[1lh]"
+                        />
                       </div>
-                      <p className="text-base">{0} %</p>
+
+                      {/* Percentage text */}
+                      <p className="text-base">
+                        {data.ratingDistribution[rating]} %
+                      </p>
                     </Fragment>
                   ))}
                 </div>
