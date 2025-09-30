@@ -63,7 +63,7 @@ export const authRouter = createTRPCRouter({
         data: {
           email: input.email,
           username: input.username,
-          password: input.password, //auto hashed by payload
+          password: input.password,
           tenants: [
             {
               tenant: tenant.id,
@@ -72,6 +72,7 @@ export const authRouter = createTRPCRouter({
           ],
         },
       });
+
       const data = await ctx.payload.login({
         collection: "users",
         data: {

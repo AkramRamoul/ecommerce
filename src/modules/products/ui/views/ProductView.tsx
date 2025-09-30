@@ -11,7 +11,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { LinkIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { toast } from "sonner";
 
 const CartButton = dynamic(
@@ -41,6 +41,8 @@ export const ProductView = ({ productId, tenantSlug }: Props) => {
   const { data } = useSuspenseQuery(
     trpc.products.getOne.queryOptions({ id: productId })
   );
+
+  const [copied, setCopied] = useState(false);
 
   return (
     <div className="px-4 lg:px-12 py-10">
@@ -128,10 +130,12 @@ export const ProductView = ({ productId, tenantSlug }: Props) => {
                     className="size-12"
                     variant={"elevated"}
                     onClick={() => {
+                      setCopied(true);
                       navigator.clipboard.writeText(window.location.href);
                       toast.success("Product link copied to clipboard");
+                      setTimeout(() => setCopied(false), 1000);
                     }}
-                    disabled={false}
+                    disabled={copied}
                   >
                     <LinkIcon />
                   </Button>

@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { StarIcon } from "lucide-react";
 
 interface ProductCardProps {
   id: string;
@@ -52,16 +53,14 @@ export const ProductCard = ({
           </div>
           {reviewCount > 0 && (
             <div className="flex items-center gap-1">
-              <span className="text-yellow-500">
-                {"★"
-                  .repeat(reviewRating)
-                  .padEnd(5, "☆")
-                  .split("")
-                  .map((star, index) => (
-                    <span key={index}>{star}</span>
-                  ))}
-              </span>
-              <p className="text-sm font-medium">({reviewCount})</p>
+              {reviewCount > 0 && (
+                <div className="flex items-center gap-1">
+                  <StarIcon className="size-4 fill-black" />
+                  <p className="text-sm font-medium">
+                    {reviewRating} ({reviewCount})
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>
