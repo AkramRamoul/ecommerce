@@ -1,7 +1,14 @@
 import type { CollectionConfig } from "payload";
+import { isSuperAdmin } from "@/lib/access";
 
 export const Reviews: CollectionConfig = {
   slug: "reviews",
+  access: {
+    read: ({ req }) => isSuperAdmin(req.user),
+    create: ({ req }) => isSuperAdmin(req.user),
+    update: ({ req }) => isSuperAdmin(req.user),
+    delete: ({ req }) => isSuperAdmin(req.user),
+  },
   fields: [
     { name: "description", type: "textarea", required: true },
     { name: "rating", type: "number", required: true, min: 1, max: 5 },

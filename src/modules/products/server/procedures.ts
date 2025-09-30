@@ -86,6 +86,9 @@ export const productsRouter = createTRPCRouter({
       const product = await ctx.payload.findByID({
         collection: "products",
         id: input.id,
+        select: {
+          content: false,
+        },
       });
       return {
         ...product,
@@ -191,6 +194,9 @@ export const productsRouter = createTRPCRouter({
         limit: input.limit,
         where,
         sort,
+        select: {
+          content: false,
+        },
       });
 
       const dataWithReviews = await Promise.all(
