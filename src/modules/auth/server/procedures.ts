@@ -4,6 +4,7 @@ import { headers as getHeaders } from "next/headers";
 
 import z from "zod";
 import { generateAuthCookies } from "../utils";
+import { stripe } from "@/lib/stripe";
 export const authRouter = createTRPCRouter({
   session: baseProcedure.query(async ({ ctx }) => {
     const headers = await getHeaders();
@@ -49,12 +50,19 @@ export const authRouter = createTRPCRouter({
           message: "User already exists",
         });
       }
+      const account = await stripe.accounts.create({});
+      if (!account.id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Failed to create stripe account",
+        });
+      }
       const tenant = await ctx.payload.create({
         collection: "tenants",
         data: {
           name: input.username,
           slug: input.username,
-          stripeAccountId: "test",
+          stripeAccountId: account.id,
         },
       });
 
