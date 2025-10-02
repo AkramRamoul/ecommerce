@@ -10,6 +10,7 @@ import Stripe from "stripe";
 import z from "zod";
 import { checkoutMetaData, productMetaData } from "../types";
 import { stripe } from "@/lib/stripe";
+import { platformPercentage } from "@/constants";
 
 export const checkoutRouter = createTRPCRouter({
   verify: protectedProcedure.mutation(async ({ ctx }) => {
@@ -97,9 +98,24 @@ export const checkoutRouter = createTRPCRouter({
       if (!tenant) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Tenant does not have a Stripe account",
+          message: "Tenant not found",
         });
       }
+      if (!tenant.stripeDetailsSubmitted) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Stripe details not submitted",
+        });
+      }
+
+      const totalAmount = products.docs.reduce(
+        (acc, item) => acc + item.price * 100,
+        0
+      );
+
+      const platformFeeAmount = Math.round(
+        totalAmount * (platformPercentage / 100)
+      );
 
       const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] =
         products.docs.map((product) => ({
@@ -118,17 +134,25 @@ export const checkoutRouter = createTRPCRouter({
           },
           quantity: 1,
         }));
-      const checkout = await stripe.checkout.sessions.create({
-        customer_email: ctx.session.user.email,
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/tenants/${input.tenantSlug}/checkout?success=true`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/tenants/${input.tenantSlug}/checkout?cancel=true`,
-        line_items: lineItems,
-        invoice_creation: { enabled: true },
-        metadata: {
-          userId: ctx.session.user.id,
-        } as checkoutMetaData,
-        mode: "payment",
-      });
+      const checkout = await stripe.checkout.sessions.create(
+        {
+          customer_email: ctx.session.user.email,
+          success_url: `${process.env.NEXT_PUBLIC_APP_URL}/tenants/${input.tenantSlug}/checkout?success=true`,
+          cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/tenants/${input.tenantSlug}/checkout?cancel=true`,
+          line_items: lineItems,
+          invoice_creation: { enabled: true },
+          metadata: {
+            userId: ctx.session.user.id,
+          } as checkoutMetaData,
+          payment_intent_data: {
+            application_fee_amount: platformFeeAmount,
+          },
+          mode: "payment",
+        },
+        {
+          stripeAccount: tenant.stripeAccountId,
+        }
+      );
       if (!checkout.url) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
