@@ -228,7 +228,21 @@ export interface Product {
   id: string;
   tenant?: (string | null) | Tenant;
   title: string;
-  description?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   price: number;
   category?: (string | null) | Category;
   tags?: (string | Tag)[] | null;
@@ -237,7 +251,29 @@ export interface Product {
   /**
    * Protected content only visible to customers after purshase
    */
-  content?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Archiving a product will hide it from the store and prevent new purchases. Existing customers will retain access in their library.
+   */
+  isArchived?: boolean | null;
+  /**
+   * This product will not be shown in the public store front but only in your tenant store.
+   */
+  isPrivate?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -428,6 +464,8 @@ export interface ProductsSelect<T extends boolean = true> {
   image?: T;
   refundPolicy?: T;
   content?: T;
+  isArchived?: T;
+  isPrivate?: T;
   updatedAt?: T;
   createdAt?: T;
 }

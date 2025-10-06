@@ -6,6 +6,8 @@ import { Progress } from "@/components/ui/progress";
 import { generateTenentUrl } from "@/lib/utils";
 import dynamic from "next/dynamic";
 
+import { RichText } from "@payloadcms/richtext-lexical/react";
+
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { LinkIcon, StarIcon } from "lucide-react";
@@ -109,9 +111,7 @@ export const ProductView = ({ productId, tenantSlug }: Props) => {
             </div>
             <div className="p-6">
               {data.description ? (
-                <p className="font-medium text-muted-foreground italic">
-                  {data.description}
-                </p>
+                <RichText data={data.description} />
               ) : (
                 <p>No description provided</p>
               )}
@@ -182,6 +182,23 @@ export const ProductView = ({ productId, tenantSlug }: Props) => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const ProductViewSkeleton = () => {
+  return (
+    <div className="px-4 lg:px-12 py-10">
+      <div className="border rounded-sm bg-white overflow-hidden">
+        <div className="relative aspect-[3.9] border-b">
+          <Image
+            src={"/pholder.jpg"}
+            fill
+            alt="LOADING..."
+            className="object-cover"
+          />
         </div>
       </div>
     </div>

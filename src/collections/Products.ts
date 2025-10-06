@@ -12,6 +12,7 @@ export const Products: CollectionConfig = {
 
       return Boolean(tenant?.stripeDetailsSubmitted);
     },
+    delete: ({ req }) => isSuperAdmin(req.user),
   },
   admin: {
     useAsTitle: "title",
@@ -25,7 +26,7 @@ export const Products: CollectionConfig = {
     },
     {
       name: "description",
-      type: "text",
+      type: "richText",
     },
     {
       name: "price",
@@ -57,10 +58,30 @@ export const Products: CollectionConfig = {
     },
     {
       name: "content",
-      type: "textarea",
+      type: "richText",
       admin: {
         description:
           "Protected content only visible to customers after purshase",
+      },
+    },
+    {
+      name: "isArchived",
+      label: "Archive",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        description:
+          "Archiving a product will hide it from the store and prevent new purchases. Existing customers will retain access in their library.",
+      },
+    },
+    {
+      name: "isPrivate",
+      label: "Private",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        description:
+          "This product will not be shown in the public store front but only in your tenant store.",
       },
     },
   ],
