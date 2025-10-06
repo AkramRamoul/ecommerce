@@ -1,6 +1,6 @@
 import configPromise from "@payload-config";
 import { getPayload } from "payload";
-
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export const GET = async (request: Request) => {
   const payload = await getPayload({
     config: configPromise,
