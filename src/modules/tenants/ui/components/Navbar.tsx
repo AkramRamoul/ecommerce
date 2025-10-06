@@ -54,7 +54,7 @@ export const Navbar = ({ slug }: Props) => {
               alt={slug}
             />
           )}
-          <p className="text-xl">{data.name}</p>
+          <p className="text-xl">{data.name.toUpperCase()}&apos;s store </p>
         </Link>
         <CheckoutButton tenantSlug={data.slug} hideIfEmpty />
       </div>

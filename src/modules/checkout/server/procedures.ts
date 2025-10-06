@@ -11,6 +11,7 @@ import z from "zod";
 import { checkoutMetaData, productMetaData } from "../types";
 import { stripe } from "@/lib/stripe";
 import { platformPercentage } from "@/constants";
+import { generateTenentUrl } from "@/lib/utils";
 
 export const checkoutRouter = createTRPCRouter({
   verify: protectedProcedure.mutation(async ({ ctx }) => {
@@ -139,11 +140,12 @@ export const checkoutRouter = createTRPCRouter({
           },
           quantity: 1,
         }));
+      const domain = generateTenentUrl(tenant.slug);
       const checkout = await stripe.checkout.sessions.create(
         {
           customer_email: ctx.session.user.email,
-          success_url: `${process.env.NEXT_PUBLIC_APP_URL}/tenants/${input.tenantSlug}/checkout?success=true`,
-          cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/tenants/${input.tenantSlug}/checkout?cancel=true`,
+          success_url: `${domain}/checkout?success=true`,
+          cancel_url: `${domain}/checkout?cancel=true`,
           line_items: lineItems,
           invoice_creation: { enabled: true },
           metadata: {
