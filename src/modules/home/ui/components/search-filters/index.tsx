@@ -7,6 +7,7 @@ import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { DEFAULT_BG_COLOR } from "@/modules/home/constants";
 import BreadCrumbNavigation from "./BreadCrumbNavigation";
+import { useProductFilters } from "@/modules/products/hooks/use-product-filters";
 
 export const SearchFilters = () => {
   const trpc = useTRPC();
@@ -27,13 +28,17 @@ export const SearchFilters = () => {
     activeCategoryData?.subcategories?.find(
       (subcat) => subcat.slug === activeSubcategory
     )?.name || null;
+  const [filters, setFilters] = useProductFilters();
 
   return (
     <div
       className="px-4 lg:px-12 py-8 border-b flex flex-col gap-4 w-full"
       style={{ backgroundColor: activeCategoryColor }}
     >
-      <SearchInput />
+      <SearchInput
+        defaultValue={filters.search}
+        onChange={(value) => setFilters({ search: value })}
+      />
       <div className="hidden lg:block">
         <Categories data={data} />
       </div>
