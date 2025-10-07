@@ -10,7 +10,7 @@ export const Reviews: CollectionConfig = {
     delete: ({ req }) => isSuperAdmin(req.user),
   },
   fields: [
-    { name: "description", type: "textarea", required: true },
+    { name: "description", type: "textarea", required: true, minLength: 1 },
     { name: "rating", type: "number", required: true, min: 1, max: 5 },
     {
       name: "product",
